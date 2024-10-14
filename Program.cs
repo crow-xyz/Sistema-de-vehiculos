@@ -13,9 +13,9 @@
     }
     public abstract void Acelerar();
     public abstract void Frenar();
-    public virtual string MostrarInfo()
+    public virtual void MostrarInfo()
     {
-        return $"Marca: {Marca}, Modelo: {Modelo}, Año: {Año}, Velocidad máx: {Velocidad}";
+        Console.WriteLine($"Marca: {Marca}, Modelo: {Modelo}, Año: {Año}, Velocidad máx: {Velocidad}");
     }
 }
 
@@ -42,9 +42,10 @@ public class Automovil : Vehiculo, IVehiculo
     {
         Console.WriteLine("Frenando...");
     }
-    public override string MostrarInfo()
+    public override void MostrarInfo()
     {
-        return base.MostrarInfo()+$"Puertas: {Puertas}";
+        base.MostrarInfo();
+        Console.Write($"Puertas: {Puertas}");
     }
 }
 
@@ -65,6 +66,11 @@ public class Motocicleta : Vehiculo, IVehiculo
     {
         Console.WriteLine("Frenando...");
     }
+    public override void MostrarInfo()
+    {
+        base.MostrarInfo();
+        Console.Write($"Cilindrada: {Cilindrada}");
+    }
 }
 
 public class Camion : Vehiculo, IVehiculo
@@ -84,15 +90,19 @@ public class Camion : Vehiculo, IVehiculo
     {
         Console.WriteLine("Frenando...");
     }
+    public override void MostrarInfo()
+    {
+        base.MostrarInfo();
+        Console.Write($"Capacidad de carga: {CapacidadDeCarga}");
+    }
 }
 
 class Program
 {
     static void Main()
     {
-        List<Vehiculo> Vehiculos = new List<Vehiculo>();
+        List<Vehiculo> vehiculos = new List<Vehiculo>();
         bool Power = true;
-        bool EnSubmenu = true;
         while (Power)
         {
             string menu = @"*** Sistema de vehiculos ***
@@ -104,7 +114,8 @@ class Program
             Console.WriteLine(menu);
             switch (Convert.ToInt32(Console.ReadLine()))
             {
-                case 1:
+                //Agregar vehículos
+                case 1: 
                     string submenu = @"*** Agregar vehículo ***
     Selecciona qué tipo de vehículo quieres agregar:
         1. Automóvil
@@ -113,33 +124,48 @@ class Program
 
         4. Volver al menú principal";
                     Console.Clear();
-                        Console.WriteLine(submenu);
-                        switch (Convert.ToInt32(Console.ReadLine()))
-                        {
-                            case 1:
-                                Vehiculos.Add(AgregarAutomóvil());
-                                break;
-                            case 2:
-                                Vehiculos.Add(AgregarMotocicleta());
-                                break;
-                            case 3:
-                                Vehiculos.Add(AgregarMotocicleta());
-                                break;
-                            case 4:
-                                EnSubmenu = false;
-                                break;
-                        }
-             
-                    break;
-                case 2:
-                    Console.Clear();
-                    Console.WriteLine("Lista actualizada de vehículos: ");
-                    Console.WriteLine("---------------------------------------------------------");
-                    foreach(Vehiculo vehiculo in Vehiculos)
+                    Console.WriteLine(submenu);
+                    int opcion = Convert.ToInt32(Console.ReadLine());
+                    if (opcion == 1)
                     {
-                        vehiculo.MostrarInfo();
-                        Console.WriteLine("---------------------------------------------------------");
+                        vehiculos.Add(AgregarAutomóvil());
                     }
+                    else if (opcion == 2)
+                    {
+                        vehiculos.Add(AgregarMotocicleta());
+                    }
+                    else if (opcion == 3)
+                    {
+                        vehiculos.Add(AgregarCamion());
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ingrese un valor válido del menú");
+                    }
+                    break;
+                //Mostrar información
+                case 2:
+                    if (vehiculos.Count() == 0)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("No hay vehículos agregados en el sistema");
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Lista actualizada de vehículos: ");
+                        Console.WriteLine("---------------------------------------------------------");
+                        foreach (Vehiculo v in vehiculos)
+                        {
+                            v.MostrarInfo();
+                            Console.WriteLine("---------------------------------------------------------");
+                        }
+                        break;
+                    }
+                    break;
+                //Iniciar/Detener vehículo
+                case 3:
+
                     break;
             }
         }
